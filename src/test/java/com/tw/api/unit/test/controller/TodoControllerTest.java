@@ -87,4 +87,14 @@ class TodoControllerTest {
         result.andExpect(status().isCreated());
     }
 
+    @Test
+    void should_return_status_ok_when_delete_todo_is_called() throws Exception {
+        Todo todo = new Todo(1, "Hello",  true, 1);
+        Optional<Todo> optToDoList = Optional.of(todo);
+        when(repository.findById(1)).thenReturn(optToDoList);
+
+        ResultActions result = mvc.perform(delete("/todos/1"));
+        result.andExpect(status().isOk());
+    }
+
 }

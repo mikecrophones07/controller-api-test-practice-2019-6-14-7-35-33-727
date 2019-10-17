@@ -97,4 +97,48 @@ class TodoControllerTest {
         result.andExpect(status().isOk());
     }
 
+    @Test
+    void should_return_status_is_not_found_when_delete_todo_function_is_called() throws Exception {
+        Todo todo = new Todo(1, "Hello",  true, 1);
+        Optional<Todo> optToDoList = Optional.of(todo);
+        when(repository.findById(1)).thenReturn(optToDoList);
+
+        ResultActions result = mvc.perform(delete("/todos/2"));
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_is_not_found_when_find_id_is_not_found_in_update_todo() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Todo todo = new Todo(1,"Sample", true, 1);
+        when(repository.findById(2)).thenReturn(Optional.of(todo));
+
+        ResultActions result = mvc.perform(patch("/todos/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(todo)));
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    void should_return_bad_request_when_find_id_is_null_in_update_todo() throws Exception {
+        ResultActions result = mvc.perform(patch("/todos/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+        result.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_return_is_ok_when_update_todo_is_success() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Todo todo = new Todo(1,"Sample", true, 1);
+        when(repository.findById(1)).thenReturn(Optional.of(todo));
+
+        ResultActions result = mvc.perform(patch("/todos/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(todo)));
+        result.andExpect(status().isOk());
+    }
+
 }
